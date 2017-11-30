@@ -23,8 +23,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "wiring_private.h"
 #include "../PWM.h"
 
+#ifndef UINT16_MAX
 #define UINT16_MAX 65535
+#endif
+#ifndef UINT8_MAX
 #define UINT8_MAX 255
+#endif
 
 //--------------------------------------------------------------------------------
 //							Helper Functions
@@ -49,20 +53,12 @@ bool SetFrequency_16(uint32_t f)
 	if(f > 2000000 || f < 1)
 	return false;
 	
-	//find the smallest usable multiplier
-	uint16_t multiplier = (int16_t)(F_CPU / (2 * f * UINT16_MAX));
+    uint16_t multiplier = GetPrescaler_16();
 	
-	uint8_t iterate = 0;
-	while(multiplier > pscLst[iterate++]);
-	
-	multiplier = pscLst[iterate]; //multiplier holds the clock select value, and iterate holds the corresponding CS flag
-	
-	//getting the timer top using the new multiplier
 	uint16_t timerTop = (uint16_t)(F_CPU/(2* f * multiplier));
 	
 	SetTop_16(timerTop);
-	SetPrescaler_16((prescaler)iterate);
-	
+	if (TCNT1 > timerTop) TCNT1 = timerTop-1; // ensure that the counter isn't already beyond the top value!
 	return true;
 }
 
@@ -86,7 +82,7 @@ uint16_t GetTop_16()
 	return ICR1;
 }
 
-void Initialize_16()
+void Initialize_16(uint32_t min_frequency)
 {
 	//setting the waveform generation mode
 	uint8_t wgm = 8;
@@ -94,7 +90,16 @@ void Initialize_16()
 	TCCR1A = (TCCR1A & B11111100) | (wgm & 3);
 	TCCR1B = (TCCR1B & B11100111) | ((wgm & 12) << 1);
 	
-	SetFrequency_16(500);
+    if(min_frequency > 2000000 || min_frequency < 1)
+	return false;
+	
+	//find the smallest usable multiplier
+	uint16_t multiplier = (int16_t)(F_CPU / (2 * min_frequency * UINT16_MAX));
+	
+	uint8_t iterate = 0;
+	while(multiplier > pscLst[iterate++]);
+    
+    SetPrescaler_16((prescaler)iterate);
 }
 
 float GetResolution_16()
@@ -116,36 +121,11 @@ bool SetFrequency_8(const int16_t timerOffset, uint32_t f)
 	if(f > 2000000 || f < 31)
 		return false;
 	
-	//find the smallest usable multiplier
-	uint16_t multiplier = (F_CPU / (2 * (uint32_t)f * UINT8_MAX));
+	uint16_t multiplier = GetPrescaler_8(timerOffset);
 	
-	uint8_t iterate = 0;
-	uint16_t timerTop;
-	
-	do
-	{
-		if(TIMER2_OFFSET != timerOffset)
-		{
-			while(multiplier > pscLst[++iterate]);
-			multiplier = pscLst[iterate];
-		}
-		else
-		{
-			while(multiplier > pscLst_alt[++iterate]);
-			multiplier = pscLst_alt[iterate];
-		}
-		
-		//getting the timer top using the new multiplier
-		timerTop = (F_CPU/(2* f * (uint32_t)multiplier));
-		
-	} while (timerTop > UINT8_MAX);
+	uint16_t timerTop = (F_CPU/(2* f * (uint32_t)multiplier));
 	
 	SetTop_8(timerOffset, timerTop);
-	
-	if(timerOffset != TIMER2_OFFSET)
-	SetPrescaler_8(timerOffset, (prescaler)iterate);
-	else
-	SetPrescalerAlt_8(timerOffset, (prescaler_alt)iterate);
 	
 	return true;
 }
@@ -178,7 +158,7 @@ uint8_t	GetTop_8(const int16_t timerOffset)
 	return OCRA_8(timerOffset);
 }
 
-void Initialize_8(const int16_t timerOffset)
+void Initialize_8(const int16_t timerOffset, uint32_t min_frequency)
 {
 	//setting the waveform generation mode
 	uint8_t wgm = 5;
@@ -194,14 +174,42 @@ void Initialize_8(const int16_t timerOffset)
 		TIMSK0 &= B11111110;
 	}
 	
-	SetFrequency_8(timerOffset, 500);
+    if(min_frequency > 2000000 || min_frequency < 31)
+        return false;
+	
+	//find the smallest usable multiplier
+	uint16_t multiplier = (F_CPU / (2 * (uint32_t)min_frequency * UINT8_MAX));
+	
+	uint8_t iterate = 0;
+	uint16_t timerTop; 
+	
+	do
+	{
+		if(TIMER2_OFFSET != timerOffset)
+		{
+			while(multiplier > pscLst[++iterate]);
+			multiplier = pscLst[iterate];
+		}
+		else
+		{
+			while(multiplier > pscLst_alt[++iterate]);
+			multiplier = pscLst_alt[iterate];
+		}
+		//getting the timer top using the new multiplier
+		timerTop = (F_CPU/(2* min_frequency * (uint32_t)multiplier));
+	} while (timerTop > UINT8_MAX);
+    
+    if(timerOffset != TIMER2_OFFSET)
+	SetPrescaler_8(timerOffset, (prescaler)iterate);
+	else
+	SetPrescalerAlt_8(timerOffset, (prescaler_alt)iterate);
+	
 }
 
 float GetResolution_8(const int16_t timerOffset)
 {
 	return toBaseTwo(OCRA_8(timerOffset));
 }
-
 
 //--------------------------------------------------------------------------------
 //							Timer Independent Functions
@@ -320,20 +328,22 @@ void pwmWriteHR(uint8_t pin, uint16_t val)
 	}
 }
 
-void InitTimers()
+//Initializes all timer objects, setting them to modes compatible with frequency manipulation.
+void InitTimers(uint32_t min_frequency)
 {
-	Timer0_Initialize();
-	Timer1_Initialize();
-	Timer2_Initialize();
+	Timer0_Initialize(min_frequency);
+	Timer1_Initialize(min_frequency);
+	Timer2_Initialize(min_frequency);
 }
 
-void InitTimersSafe()
+//initializes all timer objects except for timer 0, which is necessary for the Arduino's time keeping functions
+void InitTimersSafe(uint32_t min_frequency)
 {
-	Timer1_Initialize();
-	Timer2_Initialize();
+	Timer1_Initialize(min_frequency);
+	Timer2_Initialize(min_frequency);
 }
 
-extern bool SetPinFrequency( int8_t pin, uint32_t frequency )
+bool SetPinFrequency(int8_t pin, uint32_t frequency)
 {
 	uint8_t timer = digitalPinToTimer(pin);
 	
@@ -383,5 +393,4 @@ float GetPinResolution(uint8_t pin)
 	
 	return toBaseTwo(top);
 }
-
 #endif

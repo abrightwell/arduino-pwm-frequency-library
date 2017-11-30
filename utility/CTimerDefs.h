@@ -33,43 +33,46 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define TCCRB_16(tmr_offset)	_SFR_MEM8(0x81  + tmr_offset)
 #define TCCRC_16(tmr_offset)	_SFR_MEM8(0x82  + tmr_offset)
 #define ICR_16(tmr_offset)		_SFR_MEM16(0x86 + tmr_offset)
+#define TCNT_16(tmr_offset)     _SFR_MEM16(0x84 + tmr_offset)
 
 //physical memory locations used in pwmWrite()
+
+#define OCR1A_MEM	0x88
+#define OCR1B_MEM	0x8A
+#define OCR1C_MEM	0x8C
+#define OCR3A_MEM	0x98
+#define OCR3B_MEM	0x9A
+#define OCR3C_MEM	0x9C
 /*#define OCR4A_MEM	0xCF
 #define OCR4B_MEM	0xD0
 #define OCR4C_MEM	0xD1
 #define OCR4D_MEM	0xD2*/
 
-#define OCR3A_MEM	0x98
-#define OCR3B_MEM	0x9A
-#define OCR3C_MEM	0x9C
-
-#define OCR1A_MEM	0x88
-#define OCR1B_MEM	0x8A
-#define OCR1C_MEM	0x8C
 
 #define OCR0A_MEM	0x47
 #define OCR0B_MEM	0x48
 
+
+#define TCCR1A_MEM	0x80
+#define TCCR1B_MEM	0x81
+#define TCCR1C_MEM	0x82
+#define TCCR3A_MEM	0x90
+#define TCCR3B_MEM	0x91
+#define TCCR3C_MEM	0x92
 /*#define TCCR4A_MEM	0xC0
 #define TCCR4B_MEM	0xC1
 #define TCCR4C_MEM	0xC2
 #define TCCR4D_MEM	0xC3
 #define TCCR4E_MEM	0xC4*/
 
-#define TCCR3A_MEM	0x90
-#define TCCR3B_MEM	0x91
-#define TCCR3C_MEM	0x92
-
-#define TCCR1A_MEM	0x80
-#define TCCR1B_MEM	0x81
-#define TCCR1C_MEM	0x82
 
 #define TCCR0A_MEM	0x44
 #define TCCR0B_MEM	0x45
 
-#define ICR3_MEM	0x96
 #define ICR1_MEM	0x86
+#define ICR3_MEM	0x96
+
+
 
 //8 bit timers
 #define TIMER0_OFFSET	0x00
@@ -142,7 +145,7 @@ enum prescaler_alt
 #define Timer0_SetPrescaler(x)		SetPrescaler_8(TIMER0_OFFSET, x)
 #define Timer0_GetTop()				GetTop_8(TIMER0_OFFSET)
 #define Timer0_SetTop(x)			SetTop_8(TIMER0_OFFSET, x)
-#define Timer0_Initialize()			Initialize_8(TIMER0_OFFSET)
+#define Timer0_Initialize(x)		Initialize_8(TIMER0_OFFSET, x)
 #define Timer0_GetResolution()		GetResolution_8(TIMER0_OFFSET)
 
 #define Timer1_GetFrequency()		GetFrequency_16(TIMER1_OFFSET)
@@ -151,7 +154,7 @@ enum prescaler_alt
 #define Timer1_SetPrescaler(x)		SetPrescaler_16(TIMER1_OFFSET, x)
 #define Timer1_GetTop()				GetTop_16(TIMER1_OFFSET)
 #define Timer1_SetTop(x)			SetTop_16(TIMER1_OFFSET, x)
-#define Timer1_Initialize()			Initialize_16(TIMER1_OFFSET)
+#define Timer1_Initialize(x)		Initialize_16(TIMER1_OFFSET, x)
 #define Timer1_GetResolution()		GetResolution_16(TIMER1_OFFSET)
 
 #define Timer3_GetFrequency()		GetFrequency_16(TIMER3_OFFSET)
@@ -160,9 +163,10 @@ enum prescaler_alt
 #define Timer3_SetPrescaler(x)		SetPrescaler_16(TIMER3_OFFSET, x)
 #define Timer3_GetTop()				GetTop_16(TIMER3_OFFSET)
 #define Timer3_SetTop(x)			SetTop_16(TIMER3_OFFSET, x)
-#define Timer3_Initialize()			Initialize_16(TIMER3_OFFSET)
+#define Timer3_Initialize(x)		Initialize_16(TIMER3_OFFSET, x)
 #define Timer3_GetResolution()		GetResolution_16(TIMER3_OFFSET)
 
+// Timer4 on this chip is 10-bit.  Not implememted yet.
 /*#define Timer4_GetFrequency()		GetFrequency_8(TIMER4_OFFSET)
 #define Timer4_SetFrequency(x)		SetFrequency_8(TIMER4_OFFSET, x)
 #define Timer4_GetPrescaler()		GetPrescaler_8(TIMER4_OFFSET)

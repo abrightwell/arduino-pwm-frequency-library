@@ -35,8 +35,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define TCCRB_16(tmr_offset)	_SFR_MEM8(0x81  + tmr_offset)
 #define TCCRC_16(tmr_offset)	_SFR_MEM8(0x82  + tmr_offset)
 #define ICR_16(tmr_offset)		_SFR_MEM16(0x86 + tmr_offset)
+#define TCNT_16(tmr_offset)     _SFR_MEM16(0x84 + tmr_offset)
 
-//physical memory locations. Used in pwmWrite()
+//physical memory locations used in pwmWrite()
+
 #define OCR1A_MEM	0x88
 #define OCR1B_MEM	0x8A
 #define OCR1C_MEM	0x8C
@@ -152,7 +154,7 @@ enum prescaler_alt
 #define Timer0_SetPrescaler(x)		SetPrescaler_8(TIMER0_OFFSET, x)
 #define Timer0_GetTop()				GetTop_8(TIMER0_OFFSET)
 #define Timer0_SetTop(x)			SetTop_8(TIMER0_OFFSET, x)
-#define Timer0_Initialize()			Initialize_8(TIMER0_OFFSET)
+#define Timer0_Initialize(x)		Initialize_8(TIMER0_OFFSET, x)
 #define Timer0_GetResolution()		GetResolution_8(TIMER0_OFFSET)
 
 #define Timer1_GetFrequency()		GetFrequency_16(TIMER1_OFFSET)
@@ -161,7 +163,7 @@ enum prescaler_alt
 #define Timer1_SetPrescaler(x)		SetPrescaler_16(TIMER1_OFFSET, x)
 #define Timer1_GetTop()				GetTop_16(TIMER1_OFFSET)
 #define Timer1_SetTop(x)			SetTop_16(TIMER1_OFFSET, x)
-#define Timer1_Initialize()			Initialize_16(TIMER1_OFFSET)
+#define Timer1_Initialize(x)		Initialize_16(TIMER1_OFFSET, x)
 #define Timer1_GetResolution()		GetResolution_16(TIMER1_OFFSET)
 
 #define Timer2_GetFrequency()		GetFrequency_8(TIMER2_OFFSET)
@@ -170,7 +172,7 @@ enum prescaler_alt
 #define Timer2_SetPrescaler(x)		SetPrescalerAlt_8(TIMER2_OFFSET, x)
 #define Timer2_GetTop()				GetTop_8(TIMER2_OFFSET)
 #define Timer2_SetTop(x)			SetTop_8(TIMER2_OFFSET, x)
-#define Timer2_Initialize()			Initialize_8(TIMER2_OFFSET)
+#define Timer2_Initialize(x)		Initialize_8(TIMER2_OFFSET, x)
 #define Timer2_GetResolution()		GetResolution_8(TIMER2_OFFSET)
 
 #define Timer3_GetFrequency()		GetFrequency_16(TIMER3_OFFSET)
@@ -179,7 +181,7 @@ enum prescaler_alt
 #define Timer3_SetPrescaler(x)		SetPrescaler_16(TIMER3_OFFSET, x)
 #define Timer3_GetTop()				GetTop_16(TIMER3_OFFSET)
 #define Timer3_SetTop(x)			SetTop_16(TIMER3_OFFSET, x)
-#define Timer3_Initialize()			Initialize_16(TIMER3_OFFSET)
+#define Timer3_Initialize(x)		Initialize_16(TIMER3_OFFSET, x)
 #define Timer3_GetResolution()		GetResolution_16(TIMER3_OFFSET)
 
 #define Timer4_GetFrequency()		GetFrequency_16(TIMER4_OFFSET)
@@ -188,7 +190,7 @@ enum prescaler_alt
 #define Timer4_SetPrescaler(x)		SetPrescaler_16(TIMER4_OFFSET, x)
 #define Timer4_GetTop()				GetTop_16(TIMER4_OFFSET)
 #define Timer4_SetTop(x)			SetTop_16(TIMER4_OFFSET, x)
-#define Timer4_Initialize()			Initialize_16(TIMER4_OFFSET)
+#define Timer4_Initialize(x)		Initialize_16(TIMER4_OFFSET, x)
 #define Timer4_GetResolution(x)		GetResolution_16(TIMER4_OFFSET)
 
 #define Timer5_GetFrequency()		GetFrequency_16(TIMER5_OFFSET)
@@ -197,7 +199,7 @@ enum prescaler_alt
 #define Timer5_SetPrescaler(x)		SetPrescaler_16(TIMER5_OFFSET, x)
 #define Timer5_GetTop()				GetTop_16(TIMER5_OFFSET)
 #define Timer5_SetTop(x)			SetTop_16(TIMER5_OFFSET, x)
-#define Timer5_Initialize()			Initialize_16(TIMER5_OFFSET)
+#define Timer5_Initialize(x)		Initialize_16(TIMER5_OFFSET, x)
 #define Timer5_GetResolution()		GetResolution_16(TIMER5_OFFSET)
 
 #else
