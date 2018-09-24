@@ -99,31 +99,32 @@ struct TimerData //each instance is 4 bytes
 	bool		Is16Bit:			1;
 };
 
-//4 bytes each, 18 elements, 72 Bytes total
+//4 bytes each, 19 elements, 72 Bytes total
 const TimerData timer_to_pwm_data[] = {
-	{0, 0, 0, 0},										//NOT_ON_TIMER
-	{0, 0, 0, 0},										//TIMER0A	disabled when initialized
-	{OCR0A_MEM, OCR0B_MEM, TCCR0A_MEM, COM0B1, false},	//TIMER0B
-		
-	{ICR1_MEM, OCR1A_MEM, TCCR1A_MEM, COM1A1, true},	//TIMER1A
-	{ICR1_MEM, OCR1B_MEM, TCCR1A_MEM, COM1B1, true},	//TIMER1B	no C channel on timer 1?
+  {0, 0, 0, 0},                   //NOT_ON_TIMER
+  {0, 0, 0, 0},                   //TIMER0A disabled when initialized
+  {OCR0A_MEM, OCR0B_MEM, TCCR0A_MEM, COM0B1, false},  //TIMER0B
 
-	{0, 0, 0, 0, 0},									//TIMER2	
-	{0, 0, 0, 0, 0},									//TIMER2A	disabled when initialized
-	{OCR2A_MEM, OCR2B_MEM, TCCR2A_MEM, COM2B1, false},	//TIMER2B
-		
-	{ICR3_MEM, OCR3A_MEM, TCCR3A_MEM, COM3A1, true},	//TIMER3A
-	{ICR3_MEM, OCR3B_MEM, TCCR3A_MEM, COM3B1, true},	//TIMER3B
-	{ICR3_MEM, OCR3C_MEM, TCCR3A_MEM, COM3C1, true},	//TIMER3C
-		
-	{ICR4_MEM, OCR4A_MEM, TCCR4A_MEM, COM4A1, true},	//TIMER4A
-	{ICR4_MEM, OCR4B_MEM, TCCR4A_MEM, COM4B1, true},	//TIMER4B
-	{ICR4_MEM, OCR4C_MEM, TCCR4A_MEM, COM4C1, true},	//TIMER4C
-	{0, 0, 0, 0, 0},									//TIMER4D	
-		
-	{ICR5_MEM, OCR5A_MEM, TCCR5A_MEM, COM5A1, true},	//TIMER5A
-	{ICR5_MEM, OCR5B_MEM, TCCR5A_MEM, COM5B1, true},	//TIMER5B
-	{ICR5_MEM, OCR5C_MEM, TCCR5A_MEM, COM5C1, true},	//TIMER5C
+  {ICR1_MEM, OCR1A_MEM, TCCR1A_MEM, COM1A1, true},  //TIMER1A
+  {ICR1_MEM, OCR1B_MEM, TCCR1A_MEM, COM1B1, true},  //TIMER1B
+  {ICR1_MEM, OCR1C_MEM, TCCR1A_MEM, COM1C1, true},  //TIMER1C
+
+  {0, 0, 0, 0, 0},                  //TIMER2
+  {0, 0, 0, 0, 0},                  //TIMER2A disabled when initialized
+  {OCR2A_MEM, OCR2B_MEM, TCCR2A_MEM, COM2B1, false},  //TIMER2B
+
+  {ICR3_MEM, OCR3A_MEM, TCCR3A_MEM, COM3A1, true},  //TIMER3A
+  {ICR3_MEM, OCR3B_MEM, TCCR3A_MEM, COM3B1, true},  //TIMER3B
+  {ICR3_MEM, OCR3C_MEM, TCCR3A_MEM, COM3C1, true},  //TIMER3C
+
+  {ICR4_MEM, OCR4A_MEM, TCCR4A_MEM, COM4A1, true},  //TIMER4A
+  {ICR4_MEM, OCR4B_MEM, TCCR4A_MEM, COM4B1, true},  //TIMER4B
+  {ICR4_MEM, OCR4C_MEM, TCCR4A_MEM, COM4C1, true},  //TIMER4C
+  {0, 0, 0, 0, 0},                  //TIMER4D
+
+  {ICR5_MEM, OCR5A_MEM, TCCR5A_MEM, COM5A1, true},  //TIMER5A
+  {ICR5_MEM, OCR5B_MEM, TCCR5A_MEM, COM5B1, true},  //TIMER5B
+  {ICR5_MEM, OCR5C_MEM, TCCR5A_MEM, COM5C1, true},  //TIMER5C
 };
 
 enum prescaler
