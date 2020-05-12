@@ -19,16 +19,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 
-#ifndef ATIMERDEFS_H_
-#define ATIMERDEFS_H_
+#ifndef CTIMERDEFS_H_
+#define CTIMERDEFS_H_
 
-#if defined(__AVR_ATmega640__) || defined(__AVR_ATmega1280__) || defined(__AVR_ATmega1281__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega2561__)
+#if defined(__AVR_ATmega16U4__) || defined(__AVR_ATmega32U4__)
 
 //bit offset from timer 1 in the register
 #define TIMER1_OFFSET	0x00
 #define TIMER3_OFFSET	0x10
-#define TIMER4_OFFSET	0x20
-#define TIMER5_OFFSET	0xA0
 
 //generic register-accessing macros (eliminates some branching)
 #define TCCRA_16(tmr_offset)	_SFR_MEM8(0x80  + tmr_offset)
@@ -45,39 +43,36 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define OCR3A_MEM	0x98
 #define OCR3B_MEM	0x9A
 #define OCR3C_MEM	0x9C
-#define OCR4A_MEM	0xA8
-#define OCR4B_MEM	0xAA
-#define OCR4C_MEM	0xAC
-#define OCR5A_MEM	0x128
-#define OCR5B_MEM	0x12A
-#define OCR5C_MEM	0x12C
+/*#define OCR4A_MEM	0xCF
+#define OCR4B_MEM	0xD0
+#define OCR4C_MEM	0xD1
+#define OCR4D_MEM	0xD2*/
+
 
 #define OCR0A_MEM	0x47
 #define OCR0B_MEM	0x48
-#define OCR2A_MEM	0xB3
-#define OCR2B_MEM	0xB4
+
 
 #define TCCR1A_MEM	0x80
 #define TCCR1B_MEM	0x81
 #define TCCR1C_MEM	0x82
 #define TCCR3A_MEM	0x90
 #define TCCR3B_MEM	0x91
-#define TCCR4A_MEM	0xA0
-#define TCCR4B_MEM	0xA1
-#define TCCR4C_MEM	0xA2
-#define TCCR5A_MEM	0x120
-#define TCCR5B_MEM	0x121
-#define TCCR5C_MEM	0x122
+#define TCCR3C_MEM	0x92
+/*#define TCCR4A_MEM	0xC0
+#define TCCR4B_MEM	0xC1
+#define TCCR4C_MEM	0xC2
+#define TCCR4D_MEM	0xC3
+#define TCCR4E_MEM	0xC4*/
+
 
 #define TCCR0A_MEM	0x44
 #define TCCR0B_MEM	0x45
-#define TCCR2A_MEM	0xB0
-#define TCCR2B_MEM	0xB1
 
 #define ICR1_MEM	0x86
 #define ICR3_MEM	0x96
-#define ICR4_MEM	0xA6
-#define ICR5_MEM	0x126
+
+
 
 //8 bit timers
 #define TIMER0_OFFSET	0x00
@@ -99,32 +94,27 @@ struct TimerData //each instance is 4 bytes
 	bool		Is16Bit:			1;
 };
 
-//4 bytes each, 19 elements, 72 Bytes total
+//4 bytes each, 18 elements, 72 Bytes total
 const TimerData timer_to_pwm_data[] = {
-  {0, 0, 0, 0},                   //NOT_ON_TIMER
-  {0, 0, 0, 0},                   //TIMER0A disabled when initialized
-  {OCR0A_MEM, OCR0B_MEM, TCCR0A_MEM, COM0B1, false},  //TIMER0B
+	{0, 0, 0, 0},										//NOT_ON_TIMER
+	{0, 0, 0, 0},										//TIMER0A	disabled when initialized
+	{OCR0A_MEM, OCR0B_MEM, TCCR0A_MEM, COM0B1, false},	//TIMER0B
+		
+	{ICR1_MEM, OCR1A_MEM, TCCR1A_MEM, COM1A1, true},	//TIMER1A
+	{ICR1_MEM, OCR1B_MEM, TCCR1A_MEM, COM1B1, true},	//TIMER1B	no C channel on timer 1?
 
-  {ICR1_MEM, OCR1A_MEM, TCCR1A_MEM, COM1A1, true},  //TIMER1A
-  {ICR1_MEM, OCR1B_MEM, TCCR1A_MEM, COM1B1, true},  //TIMER1B
-  {ICR1_MEM, OCR1C_MEM, TCCR1A_MEM, COM1C1, true},  //TIMER1C
-
-  {0, 0, 0, 0, 0},                  //TIMER2
-  {0, 0, 0, 0, 0},                  //TIMER2A disabled when initialized
-  {OCR2A_MEM, OCR2B_MEM, TCCR2A_MEM, COM2B1, false},  //TIMER2B
-
-  {ICR3_MEM, OCR3A_MEM, TCCR3A_MEM, COM3A1, true},  //TIMER3A
-  {ICR3_MEM, OCR3B_MEM, TCCR3A_MEM, COM3B1, true},  //TIMER3B
-  {ICR3_MEM, OCR3C_MEM, TCCR3A_MEM, COM3C1, true},  //TIMER3C
-
-  {ICR4_MEM, OCR4A_MEM, TCCR4A_MEM, COM4A1, true},  //TIMER4A
-  {ICR4_MEM, OCR4B_MEM, TCCR4A_MEM, COM4B1, true},  //TIMER4B
-  {ICR4_MEM, OCR4C_MEM, TCCR4A_MEM, COM4C1, true},  //TIMER4C
-  {0, 0, 0, 0, 0},                  //TIMER4D
-
-  {ICR5_MEM, OCR5A_MEM, TCCR5A_MEM, COM5A1, true},  //TIMER5A
-  {ICR5_MEM, OCR5B_MEM, TCCR5A_MEM, COM5B1, true},  //TIMER5B
-  {ICR5_MEM, OCR5C_MEM, TCCR5A_MEM, COM5C1, true},  //TIMER5C
+	//{0, 0, 0, 0, 0},									//TIMER2	
+	//{0, 0, 0, 0, 0},									//TIMER2A	disabled when initialized
+	//{OCR2A_MEM, OCR2B_MEM, TCCR2A_MEM, COM2B1, false},	//TIMER2B
+		
+	{ICR3_MEM, OCR3A_MEM, TCCR3A_MEM, COM3A1, true},	//TIMER3A
+	{ICR3_MEM, OCR3B_MEM, TCCR3A_MEM, COM3B1, true},	//TIMER3B
+	{ICR3_MEM, OCR3C_MEM, TCCR3A_MEM, COM3C1, true},	//TIMER3C
+		
+	/*{ICR4_MEM, OCR4A_MEM, TCCR4A_MEM, COM4A1, false},	//TIMER4A
+	{ICR4_MEM, OCR4B_MEM, TCCR4A_MEM, COM4B1, false},	//TIMER4B
+	{ICR4_MEM, OCR4C_MEM, TCCR4A_MEM, COM4C1, false},	//TIMER4C
+	{0, 0, 0, 0, 0},									//TIMER4D	*/
 };
 
 enum prescaler
@@ -167,15 +157,6 @@ enum prescaler_alt
 #define Timer1_Initialize(x)		Initialize_16(TIMER1_OFFSET, x)
 #define Timer1_GetResolution()		GetResolution_16(TIMER1_OFFSET)
 
-#define Timer2_GetFrequency()		GetFrequency_8(TIMER2_OFFSET)
-#define Timer2_SetFrequency(x)		SetFrequency_8(TIMER2_OFFSET, x)
-#define Timer2_GetPrescaler()		GetPrescaler_8(TIMER2_OFFSET)
-#define Timer2_SetPrescaler(x)		SetPrescalerAlt_8(TIMER2_OFFSET, x)
-#define Timer2_GetTop()				GetTop_8(TIMER2_OFFSET)
-#define Timer2_SetTop(x)			SetTop_8(TIMER2_OFFSET, x)
-#define Timer2_Initialize(x)		Initialize_8(TIMER2_OFFSET, x)
-#define Timer2_GetResolution()		GetResolution_8(TIMER2_OFFSET)
-
 #define Timer3_GetFrequency()		GetFrequency_16(TIMER3_OFFSET)
 #define Timer3_SetFrequency(x)		SetFrequency_16(TIMER3_OFFSET, x)
 #define Timer3_GetPrescaler()		GetPrescaler_16(TIMER3_OFFSET)
@@ -185,25 +166,18 @@ enum prescaler_alt
 #define Timer3_Initialize(x)		Initialize_16(TIMER3_OFFSET, x)
 #define Timer3_GetResolution()		GetResolution_16(TIMER3_OFFSET)
 
-#define Timer4_GetFrequency()		GetFrequency_16(TIMER4_OFFSET)
-#define Timer4_SetFrequency(x)		SetFrequency_16(TIMER4_OFFSET, x)
-#define Timer4_GetPrescaler()		GetPrescaler_16(TIMER4_OFFSET)
-#define Timer4_SetPrescaler(x)		SetPrescaler_16(TIMER4_OFFSET, x)
-#define Timer4_GetTop()				GetTop_16(TIMER4_OFFSET)
-#define Timer4_SetTop(x)			SetTop_16(TIMER4_OFFSET, x)
-#define Timer4_Initialize(x)		Initialize_16(TIMER4_OFFSET, x)
-#define Timer4_GetResolution(x)		GetResolution_16(TIMER4_OFFSET)
-
-#define Timer5_GetFrequency()		GetFrequency_16(TIMER5_OFFSET)
-#define Timer5_SetFrequency(x)		SetFrequency_16(TIMER5_OFFSET, x)
-#define Timer5_GetPrescaler()		GetPrescaler_16(TIMER5_OFFSET)
-#define Timer5_SetPrescaler(x)		SetPrescaler_16(TIMER5_OFFSET, x)
-#define Timer5_GetTop()				GetTop_16(TIMER5_OFFSET)
-#define Timer5_SetTop(x)			SetTop_16(TIMER5_OFFSET, x)
-#define Timer5_Initialize(x)		Initialize_16(TIMER5_OFFSET, x)
-#define Timer5_GetResolution()		GetResolution_16(TIMER5_OFFSET)
+// Timer4 on this chip is 10-bit.  Not implememted yet.
+/*#define Timer4_GetFrequency()		GetFrequency_8(TIMER4_OFFSET)
+#define Timer4_SetFrequency(x)		SetFrequency_8(TIMER4_OFFSET, x)
+#define Timer4_GetPrescaler()		GetPrescaler_8(TIMER4_OFFSET)
+#define Timer4_SetPrescaler(x)		SetPrescaler_8(TIMER4_OFFSET, x)
+#define Timer4_GetTop()				GetTop_8(TIMER4_OFFSET)
+#define Timer4_SetTop(x)			SetTop_8(TIMER4_OFFSET, x)
+#define Timer4_Initialize()			Initialize_8(TIMER4_OFFSET)
+#define Timer4_GetResolution(x)		GetResolution_8(TIMER4_OFFSET)
+*/
 
 #else
-	#error "ATimerDefs.h only supports ATMega640, ATMega1280, ATMega1281, ATMega2560, and ATMega2561"
+	#error "CTimerDefs.h only supports ATMega16U4 and ATMega32U4"
 #endif
-#endif /* ATIMERDEFS_H_ */
+#endif /* CTIMERDEFS_H_ */

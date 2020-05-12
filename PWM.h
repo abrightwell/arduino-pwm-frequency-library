@@ -22,6 +22,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 This library is built to support two of the AVR Architecture 'groups' that Arduino uses
 a) ATmega48/88/168/328,
 b) ATmega640/1280/1281/2560/2561
+c) ATmega16U4/32U4 (Leonardo)
 */
 
 #ifndef PWM_H_
@@ -34,6 +35,10 @@ b) ATmega640/1280/1281/2560/2561
 	#include "utility/ATimerDefs.h"
 #elif defined(__AVR_ATmega48__) || defined(__AVR_ATmega88__) || defined(__AVR_ATmega88P__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega168P__) || defined(__AVR_ATmega328__) || defined(__AVR_ATmega328P__)
 	#include "utility/BTimerDefs.h"
+#elif defined(__AVR_ATmega16U4__) || defined(__AVR_ATmega32U4__)
+	#include "utility/CTimerDefs.h"
+#else
+   #error "PWM Library only supports ATmega48, ATmega88, ATmega88P, ATmega168, ATmega168P, ATmega328, ATmega328P, ATMega640, ATMega1280, ATMega1281, ATMega2560, ATMega2561, ATMega16U4, ATMega32U4"     
 #endif
 
 
@@ -45,7 +50,7 @@ extern uint16_t GetPrescaler_16(const int16_t timerOffset);
 extern void		SetPrescaler_16(const int16_t timerOffset, prescaler psc);
 extern void		SetTop_16(const int16_t timerOffset, uint16_t top);
 extern uint16_t GetTop_16(const int16_t timerOffset);
-extern void		Initialize_16(const int16_t timerOffset);
+extern void		Initialize_16(const int16_t timerOffset, uint32_t min_frequency);
 extern float	GetResolution_16(const int16_t timerOffset);
 
 // 8 bit timers
@@ -56,7 +61,7 @@ extern void		SetPrescaler_8(const int16_t timerOffset, prescaler psc);
 extern void		SetPrescalerAlt_8(const int16_t timerOffset, prescaler_alt psc);
 extern void		SetTop_8(const int16_t timerOffset, uint8_t top);
 extern uint8_t	GetTop_8(const int16_t timerOffset);
-extern void		Initialize_8(const int16_t timerOffset);
+extern void		Initialize_8(const int16_t timerOffset, uint32_t min_frequency);
 extern float	GetResolution_8(const int16_t timerOffset);
 
 #endif
@@ -70,7 +75,7 @@ extern uint16_t GetPrescaler_16();
 extern void		SetPrescaler_16(prescaler psc);
 extern void		SetTop_16(uint16_t top);
 extern uint16_t GetTop_16();
-extern void		Initialize_16();
+extern void		Initialize_16(uint32_t min_frequency);
 extern float	GetResolution_16();
 
 // 8 bit timers
@@ -81,15 +86,40 @@ extern void		SetPrescaler_8(const int16_t timerOffset, prescaler psc);
 extern void		SetPrescalerAlt_8(const int16_t timerOffset, prescaler_alt psc);
 extern void		SetTop_8(const int16_t timerOffset, uint8_t top);
 extern uint8_t	GetTop_8(const int16_t timerOffset);
-extern void		Initialize_8(const int16_t timerOffset);
+extern void		Initialize_8(const int16_t timerOffset, uint32_t min_frequency);
+extern float	GetResolution_8(const int16_t timerOffset);
+
+#endif
+
+#if defined(__AVR_ATmega16U4__) || defined(__AVR_ATmega32U4__)
+
+// 16 bit timers
+extern uint32_t	GetFrequency_16(const int16_t timerOffset);
+extern bool		SetFrequency_16(const int16_t timerOffset, uint32_t f);
+extern uint16_t GetPrescaler_16(const int16_t timerOffset);
+extern void		SetPrescaler_16(const int16_t timerOffset, prescaler psc);
+extern void		SetTop_16(const int16_t timerOffset, uint16_t top);
+extern uint16_t GetTop_16(const int16_t timerOffset);
+extern void		Initialize_16(const int16_t timerOffset, uint32_t min_frequency);
+extern float	GetResolution_16(const int16_t timerOffset);
+
+// 8 bit timers
+extern uint32_t	GetFrequency_8(const int16_t timerOffset);
+extern bool		SetFrequency_8(const int16_t timerOffset, uint32_t f);
+extern uint16_t GetPrescaler_8(const int16_t timerOffset);
+extern void		SetPrescaler_8(const int16_t timerOffset, prescaler psc);
+extern void		SetPrescalerAlt_8(const int16_t timerOffset, prescaler_alt psc);
+extern void		SetTop_8(const int16_t timerOffset, uint8_t top);
+extern uint8_t	GetTop_8(const int16_t timerOffset);
+extern void		Initialize_8(const int16_t timerOffset, uint32_t min_frequency);
 extern float	GetResolution_8(const int16_t timerOffset);
 
 #endif
 
 //common functions
 
-extern void		InitTimers();
-extern void		InitTimersSafe();										//doesn't init timers responsible for time keeping functions
+extern void		InitTimers(uint32_t min_frequency);
+extern void		InitTimersSafe(uint32_t min_frequency);					//doesn't init timers responsible for time keeping functions
 extern void		pwmWrite(uint8_t pin, uint8_t val);
 extern void		pwmWriteHR(uint8_t pin, uint16_t val);					//accepts a 16 bit value and maps it down to the timer for maximum resolution
 extern bool		SetPinFrequency(int8_t pin, uint32_t frequency);

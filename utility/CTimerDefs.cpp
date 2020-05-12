@@ -1,24 +1,24 @@
 /*
 Copyright (c) 2012 Sam Knight
-Permission is hereby granted, free of charge, to any person obtaining a copy 
-of this software and associated documentation files (the "Software"), to deal 
-in the Software without restriction, including without limitation the rights to 
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
-of the Software, and to permit persons to whom the Software is furnished to do 
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
 so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all 
+The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
-WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#if defined(__AVR_ATmega640__) || defined(__AVR_ATmega1280__) || defined(__AVR_ATmega1281__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega2561__)
+#if defined(__AVR_ATmega16U4__) || defined(__AVR_ATmega32U4__)
 
 #include "wiring_private.h"
 #include "../PWM.h"
@@ -54,7 +54,7 @@ bool SetFrequency_16(const int16_t timerOffset, uint32_t f)
 	return false;
 	
     uint16_t multiplier = GetPrescaler_16(timerOffset);
-
+	
 	uint16_t timerTop = (uint16_t)(F_CPU/(2* f * multiplier));
 	
 	SetTop_16(timerOffset, timerTop);
@@ -120,13 +120,13 @@ bool SetFrequency_8(const int16_t timerOffset, uint32_t f)
 {
 	if(f > 2000000 || f < 31)
 		return false;
-
+	
 	uint16_t multiplier = GetPrescaler_8(timerOffset);
 	
 	uint16_t timerTop = (F_CPU/(2* f * (uint32_t)multiplier));
-
-	SetTop_8(timerOffset, timerTop);
 	
+	SetTop_8(timerOffset, timerTop);
+    
 	
 	return true;
 }
@@ -286,10 +286,9 @@ void InitTimers(uint32_t min_frequency)
 void InitTimersSafe(uint32_t min_frequency)
 {
 	Timer1_Initialize(min_frequency);
-	Timer2_Initialize(min_frequency);
+
 	Timer3_Initialize(min_frequency);
-	Timer4_Initialize(min_frequency);
-	Timer5_Initialize(min_frequency);
+	//Timer4_Initialize(min_frequency);
 }
 
 bool SetPinFrequency(int8_t pin, uint32_t frequency)
@@ -300,14 +299,10 @@ bool SetPinFrequency(int8_t pin, uint32_t frequency)
 	return Timer0_SetFrequency(frequency);
 	else if(timer == TIMER1A || timer == TIMER1B)
 	return Timer1_SetFrequency(frequency);
-	else if(timer == TIMER2B)
-	return Timer2_SetFrequency(frequency);
 	else if(timer == TIMER3A || timer == TIMER3B || timer == TIMER3C)
 	return Timer3_SetFrequency(frequency);
-	else if(timer == TIMER4A || timer == TIMER4B || timer == TIMER4C)
-	return Timer4_SetFrequency(frequency);
-	else if(timer == TIMER5A || timer == TIMER5B || timer == TIMER5C)
-	return Timer5_SetFrequency(frequency);
+	/*else if(timer == TIMER4A || timer == TIMER4B || timer == TIMER4C)
+	return Timer4_SetFrequency(frequency);*/
 	else
 	return false;
 }
@@ -318,14 +313,10 @@ bool SetPinFrequencySafe(int8_t pin, uint32_t frequency)
 	
 	if(timer == TIMER1A || timer == TIMER1B)
 	return Timer1_SetFrequency(frequency);
-	else if(timer == TIMER2B)
-	return Timer2_SetFrequency(frequency);
 	else if(timer == TIMER3A || timer == TIMER3B || timer == TIMER3C)
 	return Timer3_SetFrequency(frequency);
-	else if(timer == TIMER4A || timer == TIMER4B || timer == TIMER4C)
-	return Timer4_SetFrequency(frequency);
-	else if(timer == TIMER5A || timer == TIMER5B || timer == TIMER5C)
-	return Timer5_SetFrequency(frequency);
+	/*else if(timer == TIMER4A || timer == TIMER4B || timer == TIMER4C)
+	return Timer4_SetFrequency(frequency);*/
 	else
 	return false;
 }
